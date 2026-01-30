@@ -1,6 +1,6 @@
 // service-worker.js
 
-const CACHE_NAME = "psa-cache-v1";
+const CACHE_NAME = "psa-cache-v2";
 
 // Cache the app shell + key files.
 // Keep this list small and stable. Views are cached on first visit.
