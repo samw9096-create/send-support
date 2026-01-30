@@ -10,11 +10,17 @@ async function loadView(path) {
   const res = await fetch(htmlPath);
   const html = await res.text();
 
-  console.log("Loaded view:", path, "from", htmlPath, "contains dashQ1?", html.includes('id="dashQ1"'));
-
   app.innerHTML = html;
+
+  // Add a smooth view transition every time a route loads
+  app.classList.remove("view-enter");
+  // force reflow so animation re-triggers
+  void app.offsetWidth;
+  app.classList.add("view-enter");
+
   await initView(path);
 }
+
 
 
 async function authGuard(path) {
