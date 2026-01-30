@@ -26,7 +26,7 @@ body {
               radial-gradient(900px 600px at 90% 10%, rgba(255,106,122,0.08), transparent 55%),
               var(--bg);
   color: var(--text);
-  font-size: 17px;
+  font-size: var(--base-font);
 }
 
 /* App root fills screen */
@@ -309,4 +309,56 @@ button.danger {
 @media (min-width: 900px) {
   .card { padding: 20px; }
   .container { padding: 30px; }
+}
+
+/* =========================
+   THEMES + ACCESSIBILITY
+   ========================= */
+
+/* Light theme */
+html[data-mode="light"] {
+  --bg: #f6f7fb;
+  --card: rgba(255,255,255,0.88);
+  --text: #101425;
+  --muted: #4a5677;
+  --border: rgba(0,0,0,0.10);
+  --bg2: rgba(0,0,0,0.03);
+}
+
+/* Accent themes */
+html[data-accent="blue"]   { --accent: #6aa7ff; }
+html[data-accent="purple"] { --accent: #b08cff; }
+html[data-accent="green"]  { --accent: #52d7a0; }
+html[data-accent="orange"] { --accent: #ffb35b; }
+
+/* Text size */
+html[data-text="normal"] { --base-font: 17px; }
+html[data-text="large"]  { --base-font: 19px; }
+html[data-text="xlarge"] { --base-font: 21px; }
+
+/* High contrast */
+html[data-contrast="high"] {
+  --border: rgba(255,255,255,0.25);
+}
+html[data-mode="light"][data-contrast="high"] {
+  --border: rgba(0,0,0,0.22);
+}
+
+/* Reduced motion */
+html[data-motion="reduce"] * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+button.secondary {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text);
 }
