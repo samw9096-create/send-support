@@ -1,16 +1,104 @@
 <div class="container">
   <div class="card">
     <h1>Settings</h1>
-    <p>Manage local-only preferences. No personal data stored.</p>
-<div class="row" style="margin-top:12px;">
-  <button class="secondary" id="btnSignOut">Sign out</button>
-  <button class="secondary" id="btnForgetPasskey">Forget passkey on this device</button>
-    <button class="secondary" id="btnResetOnboarding">Reset onboarding (keep login)</button>
-  <button class="danger" id="btnReset">Reset this device</button>
-</div>
+    <p>All settings are stored locally on this device. No personal data.</p>
 
+    <div class="row" style="margin-top:14px;">
+      <div class="card" style="flex:1; min-width: 280px; background: rgba(0,0,0,0.16);">
+        <h3>Accessibility</h3>
 
-    <p id="out" style="margin-top:12px; color: var(--muted);"></p>
+        <label style="display:block; margin-top:10px; color: var(--muted); font-weight: 800;">Appearance</label>
+        <select id="setMode" class="input">
+          <option value="system">System</option>
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+
+        <label style="display:block; margin-top:10px; color: var(--muted); font-weight: 800;">Accent theme</label>
+        <select id="setAccent" class="input">
+          <option value="blue">Blue</option>
+          <option value="purple">Purple</option>
+          <option value="green">Green</option>
+          <option value="orange">Orange</option>
+        </select>
+
+        <label style="display:block; margin-top:10px; color: var(--muted); font-weight: 800;">Text size</label>
+        <select id="setText" class="input">
+          <option value="normal">Normal</option>
+          <option value="large">Large</option>
+          <option value="xlarge">Extra large</option>
+        </select>
+
+        <div class="row" style="margin-top:12px;">
+          <label class="pill" style="gap:10px;">
+            <input id="setMotion" type="checkbox" style="transform: scale(1.15);" />
+            Reduce motion
+          </label>
+
+          <label class="pill" style="gap:10px;">
+            <input id="setContrast" type="checkbox" style="transform: scale(1.15);" />
+            High contrast
+          </label>
+        </div>
+
+        <p style="margin-top:10px; font-size: 13px;">
+          Tip: If animations feel distracting, enable “Reduce motion”.
+        </p>
+      </div>
+
+      <div class="card" style="flex:1; min-width: 280px; background: rgba(0,0,0,0.16);">
+        <h3>App</h3>
+
+        <label style="display:block; margin-top:10px; color: var(--muted); font-weight: 800;">Home tab</label>
+        <select id="setHomeTab" class="input">
+          <option value="/dashboard">Dashboard</option>
+          <option value="/info">Info</option>
+          <option value="/tracker">Tracker</option>
+        </select>
+
+        <div class="row" style="margin-top:12px;">
+          <label class="pill" style="gap:10px;">
+            <input id="setTips" type="checkbox" style="transform: scale(1.15);" />
+            Show tips (placeholders)
+          </label>
+
+          <label class="pill" style="gap:10px;">
+            <input id="setSounds" type="checkbox" style="transform: scale(1.15);" />
+            UI sounds (placeholder)
+          </label>
+        </div>
+
+        <div class="notice" style="margin-top:12px;">
+          Notifications & cloud sync are intentionally not enabled in this prototype (privacy-first).
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:14px;">
+      <div class="card" style="flex:1; min-width: 280px; background: rgba(0,0,0,0.16);">
+        <h3>Data (local only)</h3>
+        <p>Export/import helps you test without personal accounts.</p>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="secondary" id="btnExport">Export settings & onboarding</button>
+          <button class="secondary" id="btnImport">Import JSON</button>
+          <input id="importFile" type="file" accept="application/json" style="display:none;" />
+        </div>
+      </div>
+
+      <div class="card" style="flex:1; min-width: 280px; background: rgba(0,0,0,0.16);">
+        <h3>Account</h3>
+        <div class="row" style="margin-top:10px;">
+          <button class="secondary" id="btnSignOut">Sign out</button>
+          <button class="secondary" id="btnResetOnboarding">Reset onboarding (keep login)</button>
+          <button class="danger" id="btnReset">Reset this device</button>
+        </div>
+
+        <p id="out" style="margin-top:10px; color: var(--muted);"></p>
+      </div>
+    </div>
+
+    <p id="err" style="color: var(--danger); margin-top: 12px;"></p>
   </div>
 </div>
 
@@ -22,5 +110,3 @@
     <button class="nav-btn active" data-to="/settings">Settings</button>
   </div>
 </div>
-
-
