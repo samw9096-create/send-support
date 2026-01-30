@@ -43,11 +43,21 @@ export async function signOut() {
 export async function ensureProfile() {
   const existing = await get(PROFILE_KEY);
   if (existing) return existing;
-  const profile = {
-    learningTags: [],
-    createdAt: new Date().toISOString(),
-    // add more non-identifying settings here
-  };
+const profile = {
+  learningTags: [],
+  createdAt: new Date().toISOString(),
+  settings: {
+    mode: "system",
+    accent: "blue",
+    textSize: "normal",
+    reduceMotion: false,
+    highContrast: false,
+    homeTab: "/dashboard",
+    showTips: true,
+    uiSounds: false
+  }
+};
+
   await set(PROFILE_KEY, profile);
   return profile;
 }
