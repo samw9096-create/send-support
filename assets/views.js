@@ -7,7 +7,15 @@ import {
   saveOnboardingState
 } from "./onboarding.js";
 import { callLocalAI } from "./ai.js";
-import { passkeySignUp, passkeySignIn, pinSet, pinSignIn, signOut, resetLocalApp, resetOnboardingOnly, getProfile } from "./auth.js";
+import {   passkeySignUp,
+  passkeySignIn,
+  pinSet,
+  pinSignIn,
+  signOut,
+  resetLocalApp,
+  resetOnboardingOnly,
+  getProfile,
+  updateProfile } from "./auth.js";
 
 
 function wireBottomNav(activePath) {
@@ -260,10 +268,172 @@ async function initTracker() {
 async function initSettings() {
   wireBottomNav("/settings");
 
-  document.querySelector("#btnSignOut").onclick = async () => {
+  const errEl = document.querySelector("#err");
+  const outEl = document.querySelector("#out");
+
+  const setMode = document.querySelector("#setMode");
+  const setAccent = document.querySelector("#setAccent");
+  const setText = document.querySelector("#setText");
+  const setMotion = document.querySelector("#setMotion");
+  const setContrast = document.querySelector("#setContrast");
+
+  const setHomeTab = document.querySelector("#setHomeTab");
+  const setTips = document.querySelector("#setTips");
+  const setSounds = document.querySelector("#setSounds");
+
+  const btnExport = document.querySelector("#btnExport");
+  const btnImport = document.querySelector("#btnImport");
+  const importFile = document.querySelector("#importFile");
+
+  const btnSignOut = document.querySelector("#btnSignOut");
+  const btnResetOnboarding = document.querySelector("#btnResetOnboarding");
+  const btnReset = document.querySelector("#btnReset");
+
+  const html = document.documentElement;
+
+  const applySettingsToDOM = (s) => {
+    // mode: system/dark/light
+    if (s.mode === "system") {
+      html.removeAttribute("data-mode");
+      // optional: you could compute system preference here if you want a fixed attribute
+    } else {
+      html.setAttribute("data-mode", s.mode);
+    }
+
+    html.setAttribute("data-accent", s.accent || "blue");
+    html.setAttribute("data-text", s.textSize || "normal");
+    html.setAttribute("data-motion", s.reduceMotion ? "reduce" : "normal");
+    html.setAttribute("data-contrast", s.highContrast ? "high" : "normal");
+  };
+
+  const defaultSettings = {
+    mode: "system",
+    accent: "blue",
+    textSize: "normal",
+    reduceMotion: false,
+    highContrast: false,
+    homeTab: "/dashboard",
+    showTips: true,
+    uiSounds: false
+  };
+
+  const profile = await getProfile();
+  const settings = { ...defaultSettings, ...(profile.settings || {}) };
+
+  // hydrate UI controls
+  setMode.value = settings.mode;
+  setAccent.value = settings.accent;
+  setText.value = settings.textSize;
+  setMotion.checked = !!settings.reduceMotion;
+  setContrast.checked = !!settings.highContrast;
+
+  setHomeTab.value = settings.homeTab;
+  setTips.checked = !!settings.showTips;
+  setSounds.checked = !!settings.uiSounds;
+
+  // apply immediately
+  applySettingsToDOM(settings);
+
+  async function save(partial) {
+    errEl.textContent = "";
+    const next = { ...settings, ...partial };
+    settings.mode = next.mode;
+    settings.accent = next.accent;
+    settings.textSize = next.textSize;
+    settings.reduceMotion = next.reduceMotion;
+    settings.highContrast = next.highContrast;
+    settings.homeTab = next.homeTab;
+    settings.showTips = next.showTips;
+    settings.uiSounds = next.uiSounds;
+
+    applySettingsToDOM(settings);
+    await updateProfile({ settings });
+    outEl.textContent = "Saved.";
+    setTimeout(() => (outEl.textContent = ""), 900);
+  }
+
+  // listeners
+  setMode.onchange = () => save({ mode: setMode.value });
+  setAccent.onchange = () => save({ accent: setAccent.value });
+  setText.onchange = () => save({ textSize: setText.value });
+  setMotion.onchange = () => save({ reduceMotion: setMotion.checked });
+  setContrast.onchange = () => save({ highContrast: setContrast.checked });
+
+  setHomeTab.onchange = () => save({ homeTab: setHomeTab.value });
+  setTips.onchange = () => save({ showTips: setTips.checked });
+  setSounds.onchange = () => save({ uiSounds: setSounds.checked });
+
+  // export/import (local-only)
+  btnExport.onclick = async () => {
+    const p = await getProfile();
+    const blob = new Blob([JSON.stringify(p, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "parent-support-local-data.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  btnImport.onclick = () => importFile.click();
+
+  importFile.onchange = async () => {
+    errEl.textContent = "";
+    const file = importFile.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+
+      // Only accept expected shape; ignore anything else (privacy + safety)
+      const importedSettings = data?.settings && typeof data.settings === "object" ? data.settings : null;
+
+      const patch = {};
+      if (importedSettings) patch.settings = { ...defaultSettings, ...importedSettings };
+
+      // optionally import onboarding results too
+      if (Array.isArray(data.q1Selections)) patch.q1Selections = data.q1Selections;
+      if (Array.isArray(data.q2Selections)) patch.q2Selections = data.q2Selections;
+      if (Number.isFinite(data.q3Scale)) patch.q3Scale = data.q3Scale;
+      if (typeof data.onboardingComplete === "boolean") patch.onboardingComplete = data.onboardingComplete;
+
+      await updateProfile(patch);
+
+      // re-apply settings
+      const p2 = await getProfile();
+      const s2 = { ...defaultSettings, ...(p2.settings || {}) };
+      applySettingsToDOM(s2);
+
+      outEl.textContent = "Imported.";
+      setTimeout(() => (outEl.textContent = ""), 900);
+    } catch (e) {
+      errEl.textContent = e?.message || String(e);
+    } finally {
+      importFile.value = "";
+    }
+  };
+
+  // account controls
+  btnSignOut.onclick = async () => {
     await signOut();
     go("/login");
   };
+
+  btnResetOnboarding.onclick = async () => {
+    await resetOnboardingOnly();
+    go("/onboarding");
+  };
+
+  btnReset.onclick = async () => {
+    await resetLocalApp();
+    go("/login");
+  };
+}
+
 
   document.querySelector("#btnResetOnboarding").onclick = async () => {
     await resetOnboardingOnly();
