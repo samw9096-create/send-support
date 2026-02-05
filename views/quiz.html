@@ -1,0 +1,57 @@
+<div class="container dashboard">
+  <div class="dash-header">
+    <h1 id="quizTitle">Quiz</h1>
+  </div>
+
+  <!-- QUIZ PANEL -->
+  <div class="dash-card" id="quizPanel">
+    <div style="display:flex; justify-content: space-between; align-items: center; gap: 12px;">
+      <div style="font-weight: 900; color: var(--muted);" id="quizMeta">Question 1 of 1</div>
+      <div class="pill selected" id="quizPillStatus" style="cursor: default;">In progress</div>
+    </div>
+
+    <div style="height: 12px;"></div>
+    <div style="font-size: 18px; font-weight: 900;" id="quizQuestion">Question text…</div>
+
+    <div style="height: 14px;"></div>
+    <div id="quizChoices" class="quiz-choices"></div>
+
+    <div style="height: 14px;"></div>
+    <div class="row">
+      <button class="secondary" id="quizBack" type="button">Back</button>
+      <button id="quizNext" type="button">Next</button>
+    </div>
+
+    <p id="quizErr" style="color: var(--danger); margin-top: 12px;"></p>
+  </div>
+
+  <!-- RESULTS PANEL (hidden until finished) -->
+  <div class="dash-card" id="quizResults" style="display:none;">
+    <div style="display:flex; justify-content: space-between; align-items:center; gap: 12px;">
+      <div style="font-weight: 950; font-size: 18px;">Quiz Complete</div>
+      <div class="pill selected" id="quizGradePill" style="cursor: default;">0 / 0</div>
+    </div>
+
+    <div style="height: 12px;"></div>
+
+    <div class="notice" id="quizResultMsg">
+      Great work (placeholder). Your score is shown above.
+    </div>
+
+    <div style="height: 14px;"></div>
+
+    <div class="progressbar">
+      <div id="quizScoreFill" class="progressbar-fill" style="width: 0%;"></div>
+    </div>
+
+    <div style="height: 10px;"></div>
+    <div id="quizScoreText" style="font-weight: 900; color: var(--muted);">0%</div>
+
+    <div style="height: 16px;"></div>
+
+    <div class="row">
+      <button class="secondary" id="quizReviewBtn" type="button">Review answers</button>
+      <button id="quizReturnBtn" type="button">Return to Learning</button>
+    </div>
+  </div>
+</div>

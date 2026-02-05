@@ -1,0 +1,57 @@
+<div class="container dashboard">
+  <div class="dash-header">
+    <h1>Dashboard</h1>
+  </div>
+
+  <!-- Card 1: "Your Child" summary -->
+  <div class="dash-card dash-summary">
+    <div class="avatar-circle">
+      <div class="avatar-icon"></div>
+    </div>
+
+    <div class="summary-content">
+      <div class="summary-title">Your Child</div>
+
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span class="summary-label">Diagnosed with</span>
+          <span class="summary-value" id="dashQ1">Option 1</span>
+        </div>
+
+        <div class="summary-row">
+          <span class="summary-label">Diagnosed in</span>
+          <span class="summary-value" id="dashQ2">Option 2</span>
+        </div>
+
+        <div class="summary-row">
+          <span class="summary-label">Severity</span>
+          <span class="summary-value" id="dashQ3">Slider 3</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Progress (clickable to Learning) -->
+  <div class="dash-card dash-progress" id="dashProgressCard" role="button" tabindex="0" aria-label="Open learning progress">
+    <div id="dashProgressTrack" class="progress-track" aria-label="Learning progress dots"></div>
+
+    <div class="progress-meta">
+      <div class="progress-title">Learning Progress</div>
+      <div class="progress-pct" id="dashProgressPct">0%</div>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="dash-section-title">Quick Actions</div>
+
+  <div class="quick-actions-grid">
+    <button class="qa-tile" type="button" disabled></button>
+    <button class="qa-tile" type="button" disabled></button>
+    <button class="qa-tile" type="button" disabled></button>
+    <button class="qa-tile" type="button" disabled></button>
+    <button class="qa-tile" type="button" disabled></button>
+    <button class="qa-tile" type="button" disabled></button>
+  </div>
+
+  <p id="dashErr" style="color: var(--danger); margin-top: 12px;"></p>
+</div>
