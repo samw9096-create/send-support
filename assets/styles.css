@@ -1258,6 +1258,202 @@ h2 {
   gap: 8px;
 }
 
+/* Smart Money Table */
+.smt-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.smt-income {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.smt-income-input {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  font-weight: 700;
+  width: 120px;
+}
+
+.smt-safe {
+  text-align: right;
+}
+
+.smt-safe-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.smt-warning {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.smt-warning.warn {
+  color: #c0482b;
+  font-weight: 700;
+}
+
+.smt-whatif {
+  display: grid;
+  gap: 12px;
+}
+
+.smt-whatif label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.smt-table-wrap {
+  margin-top: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.smt-table-header,
+.smt-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1.4fr 1fr 1fr 1fr 0.6fr;
+  gap: 10px;
+  padding: 12px;
+  align-items: center;
+}
+
+.smt-table-header {
+  background: #f0f4f1;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.smt-row {
+  border-top: 1px solid var(--border);
+}
+
+.smt-cell {
+  display: grid;
+  gap: 6px;
+}
+
+.smt-name {
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.smt-rule,
+.smt-value {
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.smt-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #e8efe9;
+  overflow: hidden;
+}
+
+.smt-bar span {
+  display: block;
+  height: 100%;
+  background: var(--green);
+}
+
+.smt-status {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.smt-status.green { background: #0aa85d; }
+.smt-status.yellow { background: #f2b01e; }
+.smt-status.red { background: #e55a3a; }
+.smt-status.neutral { background: #b7b7b7; }
+
+.smt-why {
+  border: none;
+  background: transparent;
+  color: var(--green-dark);
+  font-weight: 700;
+  padding: 0;
+  cursor: pointer;
+}
+
+.smt-add {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.8fr 0.9fr auto;
+  gap: 10px;
+}
+
+@media (max-width: 720px) {
+  .smt-table-header,
+  .smt-row {
+    grid-template-columns: 1.2fr 1.2fr 1fr;
+    grid-auto-rows: auto;
+  }
+  .smt-table-header div:nth-child(n+4),
+  .smt-row .smt-cell:nth-child(n+4) {
+    display: none;
+  }
+  .smt-add {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tutorial */
+.tutorial {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #eef5f0, #f7f7f2);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.tutorial-card {
+  width: min(520px, 100%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+.tutorial-progress {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tutorial-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 8px;
+}
+
 .pot-list-item {
   display: flex;
   align-items: center;

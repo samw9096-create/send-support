@@ -1,6 +1,6 @@
 // service-worker.js
 
-const CACHE_NAME = "lloyds-one-cache-v13";
+const CACHE_NAME = "lloyds-one-cache-v15";
 
 const APP_SHELL = [
   "./",
@@ -22,6 +22,8 @@ const APP_SHELL = [
   "./views/account.html",
   "./views/friends.html",
   "./views/shopping-list.html",
+  "./views/smart-money.html",
+  "./views/tutorial.html",
   "./views/payments.html",
   "./views/bill-splitting.html",
   "./views/insights.html",

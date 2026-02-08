@@ -50,6 +50,7 @@ export async function ensureProfile() {
       { id: "f_aisha", name: "Aisha W.", handle: "@aisha" },
       { id: "f_maya", name: "Maya T.", handle: "@maya" }
     ],
+    tutorialDone: false,
     shoppingList: [],
     settings: {
       textSize: "medium",

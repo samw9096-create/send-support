@@ -15,6 +15,8 @@ export const routes = {
   "/account": "./views/account.html",
   "/friends": "./views/friends.html",
   "/shopping-list": "./views/shopping-list.html",
+  "/smart-money": "./views/smart-money.html",
+  "/tutorial": "./views/tutorial.html",
   "/payments": "./views/payments.html",
   "/bill-splitting": "./views/bill-splitting.html",
   "/insights": "./views/insights.html",
@@ -72,6 +74,8 @@ async function render() {
     "/account",
     "/friends",
     "/shopping-list",
+    "/smart-money",
+    "/tutorial",
     "/payments",
     "/bill-splitting",
     "/insights",
@@ -97,6 +101,10 @@ async function render() {
     const profile = await getProfile();
     if (!profile?.onboardingDone && path !== "/onboarding") {
       go("/onboarding");
+      return;
+    }
+    if (profile?.onboardingDone && !profile?.tutorialDone && path !== "/tutorial") {
+      go("/tutorial");
       return;
     }
   }

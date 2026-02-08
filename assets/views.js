@@ -102,6 +102,8 @@ export async function initView(path) {
   if (path === "/account") return initAccount();
   if (path === "/friends") return initFriends();
   if (path === "/shopping-list") return initShoppingList();
+  if (path === "/smart-money") return initSmartMoney();
+  if (path === "/tutorial") return initTutorial();
   if (path === "/payments") return initPayments();
   if (path === "/bill-splitting") return initBillSplitting();
   if (path === "/insights") return initInsights();
@@ -124,6 +126,7 @@ function initAccount() {
   const accountReset = document.querySelector("#accountResetBtn");
   const accountDelete = document.querySelector("#accountDeleteBtn");
   const openFriendsBtn = document.querySelector("#openFriendsBtn");
+  const openTutorialBtn = document.querySelector("#openTutorialBtn");
 
   const interestLabels = {
     films: "🎬 Films/TV",
@@ -241,6 +244,12 @@ function initAccount() {
   if (openFriendsBtn) {
     openFriendsBtn.onclick = () => go("/friends");
   }
+
+  if (openTutorialBtn) {
+    openTutorialBtn.onclick = () => {
+      updateProfile({ tutorialDone: false }).then(() => go("/tutorial"));
+    };
+  }
 }
 
 function initSplash() {
@@ -306,6 +315,7 @@ function initHome() {
   const viewAllPots = document.querySelector("#viewAllPots");
   const potLinks = document.querySelectorAll(".pot-link");
   const openShoppingList = document.querySelector("#openShoppingList");
+  const openSmartMoney = document.querySelector("#openSmartMoney");
 
   if (sendBtn) sendBtn.onclick = () => go("/payments");
   if (potsBtn) potsBtn.onclick = () => go("/budget-pots");
@@ -314,6 +324,7 @@ function initHome() {
     btn.onclick = () => go(btn.dataset.to);
   });
   if (openShoppingList) openShoppingList.onclick = () => go("/shopping-list");
+  if (openSmartMoney) openSmartMoney.onclick = () => go("/smart-money");
 
   getProfile().then((profile) => {
     const settings = { ...SETTINGS_DEFAULTS, ...(profile.settings || {}) };
@@ -335,6 +346,161 @@ function initHome() {
       });
     };
   });
+}
+
+function initSmartMoney() {
+  const incomeInput = document.querySelector("#smtIncome");
+  const rowsWrap = document.querySelector("#smtRows");
+  const warnEl = document.querySelector("#smtWarning");
+  const unallocatedEl = document.querySelector("#smtUnallocated");
+  const addBtn = document.querySelector("#smtAddBtn");
+  const newName = document.querySelector("#smtNewName");
+  const newRule = document.querySelector("#smtNewRule");
+  const newValue = document.querySelector("#smtNewValue");
+  const newLimit = document.querySelector("#smtNewLimit");
+  const incomeDelta = document.querySelector("#smtIncomeDelta");
+  const rentDelta = document.querySelector("#smtRentDelta");
+  const savingsDelta = document.querySelector("#smtSavingsDelta");
+  const incomeDeltaVal = document.querySelector("#smtIncomeDeltaVal");
+  const rentDeltaVal = document.querySelector("#smtRentDeltaVal");
+  const savingsDeltaVal = document.querySelector("#smtSavingsDeltaVal");
+
+  const state = {
+    income: 2400,
+    buckets: [
+      { id: "rent", name: "Rent", rule: "fixed", value: 800, limit: "hard" },
+      { id: "food", name: "Food", rule: "percent", value: 20, limit: "soft" },
+      { id: "fun", name: "Fun", rule: "percent", value: 8, limit: "soft" },
+      { id: "savings", name: "Savings", rule: "fixed", value: 300, limit: "hard" },
+      { id: "leftover", name: "Leftover", rule: "leftover", value: 0, limit: "soft" }
+    ],
+    spent: {
+      rent: 800,
+      food: 260,
+      fun: 120,
+      savings: 200,
+      leftover: 0
+    },
+    deltas: {
+      income: 0,
+      rent: 0,
+      savings: 0
+    }
+  };
+
+  const fmt = (n) => `£${Math.max(0, Math.round(n))}`;
+
+  const calcPlanned = (income, bucket) => {
+    if (bucket.rule === "fixed") return bucket.value;
+    if (bucket.rule === "percent") return (income * bucket.value) / 100;
+    return 0;
+  };
+
+  const recompute = () => {
+    const effectiveIncome = state.income + state.deltas.income;
+    const rentBucket = state.buckets.find((b) => b.id === "rent");
+    const savingsBucket = state.buckets.find((b) => b.id === "savings");
+    if (rentBucket) rentBucket.value = 800 + state.deltas.rent;
+    if (savingsBucket) savingsBucket.value = 300 + state.deltas.savings;
+
+    const planned = {};
+    let totalPlanned = 0;
+    let leftoverBucket = null;
+
+    state.buckets.forEach((b) => {
+      if (b.rule === "leftover") {
+        leftoverBucket = b;
+        return;
+      }
+      const amount = calcPlanned(effectiveIncome, b);
+      planned[b.id] = amount;
+      totalPlanned += amount;
+    });
+
+    const leftover = effectiveIncome - totalPlanned;
+    if (leftoverBucket) planned[leftoverBucket.id] = leftover;
+
+    return { planned, effectiveIncome, totalPlanned, leftover };
+  };
+
+  const statusFor = (planned, spent, limit) => {
+    if (planned <= 0) return { status: "neutral", why: "No planned amount yet." };
+    const ratio = spent / planned;
+    if (spent > planned) {
+      return { status: "red", why: limit === "hard" ? "Hard limit exceeded." : "Soft limit exceeded." };
+    }
+    if (ratio >= 0.85) return { status: "yellow", why: "Spending is close to the plan." };
+    return { status: "green", why: "On track with the plan." };
+  };
+
+  const render = () => {
+    if (incomeInput) incomeInput.value = String(state.income);
+    if (incomeDelta && incomeDeltaVal) incomeDeltaVal.textContent = fmt(state.deltas.income);
+    if (rentDelta && rentDeltaVal) rentDeltaVal.textContent = fmt(state.deltas.rent);
+    if (savingsDelta && savingsDeltaVal) savingsDeltaVal.textContent = fmt(state.deltas.savings);
+
+    const { planned, effectiveIncome, totalPlanned, leftover } = recompute();
+    const unallocated = leftover;
+
+    if (unallocatedEl) unallocatedEl.textContent = fmt(unallocated);
+    if (warnEl) {
+      warnEl.textContent = unallocated < 0 ? "Over-allocated. Reduce bucket values." : "Budget balances automatically with leftover.";
+      warnEl.className = `smt-warning ${unallocated < 0 ? "warn" : ""}`;
+    }
+
+    if (!rowsWrap) return;
+    rowsWrap.innerHTML = "";
+    state.buckets.forEach((b) => {
+      const plannedAmt = planned[b.id] ?? 0;
+      const spent = state.spent[b.id] ?? 0;
+      const remaining = plannedAmt - spent;
+      const status = statusFor(plannedAmt, spent, b.limit);
+
+      const row = document.createElement("div");
+      row.className = "smt-row";
+      row.innerHTML = `
+        <div class=\"smt-cell\">\n          <input class=\"smt-name\" value=\"${b.name}\" />\n          <div class=\"muted\" style=\"font-size:11px;\">${b.limit === "hard" ? "Hard limit" : "Soft limit"}</div>\n        </div>\n        <div class=\"smt-cell\">\n          <select class=\"smt-rule\">\n            <option value=\"fixed\" ${b.rule === "fixed" ? "selected" : ""}>Fixed</option>\n            <option value=\"percent\" ${b.rule === "percent" ? "selected" : ""}>% of income</option>\n            <option value=\"leftover\" ${b.rule === "leftover" ? "selected" : ""}>Leftover</option>\n          </select>\n          <input class=\"smt-value\" type=\"number\" ${b.rule === "leftover" ? "disabled" : ""} value=\"${b.value}\" />\n        </div>\n        <div class=\"smt-cell\">${fmt(plannedAmt)}</div>\n        <div class=\"smt-cell\">\n          <div>${fmt(spent)}</div>\n          <div class=\"smt-bar\"><span style=\"width:${plannedAmt ? Math.min(100, (spent / plannedAmt) * 100) : 0}%;\"></span></div>\n        </div>\n        <div class=\"smt-cell\">${fmt(remaining)}</div>\n        <div class=\"smt-cell\">\n          <span class=\"smt-status ${status.status}\"></span>\n          <button class=\"smt-why\" type=\"button\">Why?</button>\n        </div>\n      `;
+
+      const nameInput = row.querySelector(".smt-name");
+      const ruleSelect = row.querySelector(".smt-rule");
+      const valueInput = row.querySelector(".smt-value");
+      const whyBtn = row.querySelector(".smt-why");
+
+      if (nameInput) nameInput.onchange = () => { b.name = nameInput.value.trim() || b.name; };
+      if (ruleSelect) ruleSelect.onchange = () => { b.rule = ruleSelect.value; render(); };
+      if (valueInput) valueInput.onchange = () => { b.value = Number(valueInput.value || 0); render(); };
+      if (whyBtn) whyBtn.onclick = () => alert(`${b.name}: ${status.why}`);
+
+      rowsWrap.appendChild(row);
+    });
+  };
+
+  if (incomeInput) {
+    incomeInput.oninput = () => {
+      state.income = Number(incomeInput.value || 0);
+      render();
+    };
+  }
+
+  if (incomeDelta) incomeDelta.oninput = () => { state.deltas.income = Number(incomeDelta.value || 0); render(); };
+  if (rentDelta) rentDelta.oninput = () => { state.deltas.rent = Number(rentDelta.value || 0); render(); };
+  if (savingsDelta) savingsDelta.oninput = () => { state.deltas.savings = Number(savingsDelta.value || 0); render(); };
+
+  if (addBtn) {
+    addBtn.onclick = () => {
+      const name = newName?.value?.trim();
+      if (!name) return;
+      const rule = newRule?.value || "fixed";
+      const value = Number(newValue?.value || 0);
+      const limit = newLimit?.value || "soft";
+      state.buckets.push({ id: `b_${Date.now()}`, name, rule, value, limit });
+      if (newName) newName.value = "";
+      if (newValue) newValue.value = "";
+      render();
+    };
+  }
+
+  render();
 }
 
 function initShoppingList() {
@@ -881,7 +1047,7 @@ function initOnboarding() {
         onboardingDone: true,
         name: nameInput.value.trim(),
         financeCompetency: competencySelect.value
-      }).then(() => go("/home"));
+      }).then(() => go("/tutorial"));
     };
   }
 
@@ -891,4 +1057,54 @@ function initOnboarding() {
   });
 
   renderStep();
+}
+
+function initTutorial() {
+  const stepEl = document.querySelector("#tutorialStep");
+  const totalEl = document.querySelector("#tutorialTotal");
+  const titleEl = document.querySelector("#tutorialTitle");
+  const bodyEl = document.querySelector("#tutorialBody");
+  const nextBtn = document.querySelector("#tutorialNext");
+  const skipBtn = document.querySelector("#tutorialSkip");
+
+  const steps = [
+    { title: "Welcome to One", body: "This quick tour highlights the key features so you feel in control from day one." },
+    { title: "Home snapshot", body: "Your balance, transactions, and budget pots are all in one place." },
+    { title: "Payments", body: "Send money or split bills with friends in just a few taps." },
+    { title: "Smart Money Table", body: "Plan budgets like a spreadsheet and track real spending live." },
+    { title: "Money Minutes", body: "Swipe through tips and quick wins in the reels-style feed." },
+    { title: "Settings & Account", body: "Personalise your experience and manage your account safely." }
+  ];
+
+  let index = 0;
+
+  const render = () => {
+    if (stepEl) stepEl.textContent = String(index + 1);
+    if (totalEl) totalEl.textContent = String(steps.length);
+    if (titleEl) titleEl.textContent = steps[index].title;
+    if (bodyEl) bodyEl.textContent = steps[index].body;
+    if (nextBtn) nextBtn.textContent = index === steps.length - 1 ? "Finish" : "Next";
+  };
+
+  const finish = async () => {
+    await updateProfile({ tutorialDone: true });
+    go("/home");
+  };
+
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      if (index < steps.length - 1) {
+        index += 1;
+        render();
+        return;
+      }
+      finish();
+    };
+  }
+
+  if (skipBtn) {
+    skipBtn.onclick = finish;
+  }
+
+  render();
 }
