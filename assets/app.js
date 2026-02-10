@@ -17,6 +17,15 @@ export const routes = {
   "/shopping-list": "./views/shopping-list.html",
   "/smart-money": "./views/smart-money.html",
   "/tutorial": "./views/tutorial.html",
+  "/learn": "./views/learn.html",
+  "/quizzes": "./views/quizzes.html",
+  "/quiz-video": "./views/quiz-video.html",
+  "/quiz-questions": "./views/quiz-questions.html",
+  "/quiz-summary": "./views/quiz-summary.html",
+  "/transaction": "./views/transaction.html",
+  "/add-money": "./views/add-money.html",
+  "/scan-cheque": "./views/scan-cheque.html",
+  "/move-from-pot": "./views/move-from-pot.html",
   "/payments": "./views/payments.html",
   "/bill-splitting": "./views/bill-splitting.html",
   "/insights": "./views/insights.html",
@@ -25,7 +34,6 @@ export const routes = {
   "/pot-car": "./views/pot-car.html",
   "/pot-savings": "./views/pot-savings.html",
   "/deal-dash": "./views/deal-dash.html",
-  "/money-minutes": "./views/money-minutes.html",
   "/settings": "./views/settings.html"
 };
 
@@ -61,6 +69,7 @@ function mapNavPath(path) {
   if (path === "/pot-house" || path === "/pot-car" || path === "/pot-savings") return "/home";
   if (path === "/bill-splitting" || path === "/insights") return "/payments";
   if (path === "/deal-dash") return "/deal-dash";
+  if (path === "/quizzes" || path === "/quiz-video" || path === "/quiz-questions" || path === "/quiz-summary") return "/learn";
   return path;
 }
 
@@ -76,6 +85,11 @@ async function render() {
     "/shopping-list",
     "/smart-money",
     "/tutorial",
+    "/learn",
+    "/quizzes",
+    "/quiz-video",
+    "/quiz-questions",
+    "/quiz-summary",
     "/payments",
     "/bill-splitting",
     "/insights",
@@ -84,7 +98,6 @@ async function render() {
     "/pot-car",
     "/pot-savings",
     "/deal-dash",
-    "/money-minutes",
     "/settings"
   ]);
   setBottomNavVisible(navRoutes.has(path));

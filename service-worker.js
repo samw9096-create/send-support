@@ -1,6 +1,6 @@
 // service-worker.js
 
-const CACHE_NAME = "lloyds-one-cache-v15";
+const CACHE_NAME = "lloyds-one-cache-v45";
 
 const APP_SHELL = [
   "./",
@@ -14,6 +14,9 @@ const APP_SHELL = [
   "./assets/auth.js",
   "./assets/views.js",
   "./assets/nav.js",
+  "./assets/supabase.js",
+  "./assets/remote.js",
+  "./assets/data/deal-dash.json",
 
   "./views/login.html",
   "./views/splash.html",
@@ -24,6 +27,15 @@ const APP_SHELL = [
   "./views/shopping-list.html",
   "./views/smart-money.html",
   "./views/tutorial.html",
+  "./views/learn.html",
+  "./views/quizzes.html",
+  "./views/quiz-video.html",
+  "./views/quiz-questions.html",
+  "./views/quiz-summary.html",
+  "./views/transaction.html",
+  "./views/add-money.html",
+  "./views/scan-cheque.html",
+  "./views/move-from-pot.html",
   "./views/payments.html",
   "./views/bill-splitting.html",
   "./views/insights.html",
@@ -36,6 +48,7 @@ const APP_SHELL = [
   "./views/settings.html",
 
   "./one-logo.png",
+  "./tablogo.png",
   "./v24044gl0000ctelhbfog65h4q43vj90.MP4",
   "./e54835240e704c41a3a8da0bbbb71378 2.MOV",
   "./assets/fonts/inter.ttf",

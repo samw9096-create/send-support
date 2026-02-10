@@ -16,9 +16,25 @@
     </div>
 
     <div class="theme-grid">
-      <div class="theme-card stars" data-theme-card="stars">Stars</div>
-      <div class="theme-card flowers" data-theme-card="flowers">Flowers</div>
-      <div class="theme-card bubbles" data-theme-card="bubbles">Bubbles</div>
+      <div class="theme-card stars" data-bg-theme="stars">Stars</div>
+      <div class="theme-card flowers" data-bg-theme="flowers">Flowers</div>
+      <div class="theme-card bubbles" data-bg-theme="bubbles">Bubbles</div>
+      <div class="theme-card linen" data-bg-theme="linen">Linen</div>
+      <div class="theme-card sunrise" data-bg-theme="sunrise">Sunrise</div>
+      <div class="theme-card dusk" data-bg-theme="dusk">Dusk</div>
+      <div class="theme-card custom" data-bg-theme="custom" id="customThemeCard">Custom</div>
+    </div>
+
+    <div class="settings-list">
+      <div class="settings-item">
+        <span>Upload background</span>
+        <button id="uploadBgBtn" class="action-btn" type="button">Upload</button>
+        <input id="bgUploadInput" type="file" accept="image/*" style="display:none;" />
+      </div>
+      <div class="settings-item">
+        <span>Remove custom background</span>
+        <button id="removeBgBtn" class="action-btn" type="button">Remove</button>
+      </div>
     </div>
 
     <div class="settings-list">

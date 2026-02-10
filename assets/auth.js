@@ -1,4 +1,5 @@
 import { get, set, del } from "./storage.js";
+import { supabase } from "./supabase.js";
 
 const AUTH_KEY = "auth_state";
 const PROFILE_KEY = "profile";
@@ -24,12 +25,34 @@ function randomId(prefix = "user") {
 }
 
 export async function getAuthState() {
+  const { data } = await supabase.auth.getSession();
+  if (data?.session?.user) {
+    return { signedIn: true, method: "password", userId: data.session.user.id };
+  }
   return (await get(AUTH_KEY)) || { signedIn: false };
 }
 
 export async function signOut() {
-  const state = await getAuthState();
-  await set(AUTH_KEY, { ...state, signedIn: false });
+  await supabase.auth.signOut();
+  const state = await get(AUTH_KEY);
+  if (state) await set(AUTH_KEY, { ...state, signedIn: false });
+}
+
+export async function signUpWithEmail(email, password) {
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+export async function signInWithEmail(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+export async function getSessionUser() {
+  const { data } = await supabase.auth.getUser();
+  return data?.user || null;
 }
 
 export async function ensureProfile() {
@@ -52,6 +75,9 @@ export async function ensureProfile() {
     ],
     tutorialDone: false,
     shoppingList: [],
+    quizCompleted: [],
+    learningXP: 0,
+    learningStreak: 0,
     settings: {
       textSize: "medium",
       highContrast: false,
@@ -69,7 +95,9 @@ export async function ensureProfile() {
       dataSaver: false,
       location: false,
       marketing: false,
-      statements: "pdf"
+      statements: "pdf",
+      bgTheme: "stars",
+      customBg: ""
     }
     ,
     avatarDataUrl: ""
@@ -115,6 +143,17 @@ export async function passkeySignUp() {
   const rawId = bufToB64url(cred.rawId);
 
   await set(AUTH_KEY, { signedIn: true, method: "passkey", userId, credentialId: rawId });
+  try {
+    const { data } = await supabase.auth.getUser();
+    if (data?.user?.id) {
+      await supabase.from("user_passkeys").insert({
+        user_id: data.user.id,
+        credential_id: rawId
+      });
+    }
+  } catch {
+    // optional table; ignore if not present
+  }
   await ensureProfile();
   return true;
 }
@@ -137,7 +176,11 @@ export async function passkeySignIn() {
   };
 
   await navigator.credentials.get({ publicKey });
-  await set(AUTH_KEY, { ...state, signedIn: true, method: "passkey" });
+  const { data } = await supabase.auth.getSession();
+  if (!data?.session?.user) {
+    throw new Error("Passkey unlock is available after email login on this device.");
+  }
+  await set(AUTH_KEY, { ...state, signedIn: true, method: "passkey", userId: data.session.user.id });
   return true;
 }
 
