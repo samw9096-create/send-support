@@ -1,0 +1,79 @@
+<div class="container dashboard">
+  <div class="dash-header">
+    <h1>Dashboard</h1>
+  </div>
+
+  <!-- Card 1: "Your Child" summary -->
+  <div class="dash-card dash-summary">
+    <div class="avatar-circle">
+      <div class="avatar-icon"></div>
+    </div>
+
+    <div class="summary-content">
+      <div class="summary-title">Your Child</div>
+
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span class="summary-label">Diagnosed with</span>
+          <span class="summary-value" id="dashQ1">Option 1</span>
+        </div>
+
+        <div class="summary-row">
+          <span class="summary-label">Diagnosed in</span>
+          <span class="summary-value" id="dashQ2">Option 2</span>
+        </div>
+
+        <div class="summary-row">
+          <span class="summary-label">Severity</span>
+          <span class="summary-value" id="dashQ3">Slider 3</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Learning Progress (dynamic, clickable) -->
+  <div class="dash-card dash-progress" id="dashProgressCard" role="button" tabindex="0" aria-label="Open learning">
+    <div id="dashProgressTrack" class="progress-track" aria-label="Learning progress dots"></div>
+
+    <div class="progress-meta">
+      <div class="progress-title">Learning Progress</div>
+      <div class="progress-pct" id="dashProgressPct">0%</div>
+    </div>
+  </div>
+
+  <div class="dash-section-title">Quick Actions</div>
+
+  <div class="quick-actions-grid">
+    <button class="qa-tile qa-action" id="qaPrimary" type="button">
+      <div class="qa-title" id="qaPrimaryTitle">Start recommended</div>
+      <div class="qa-sub" id="qaPrimarySub">Quiz</div>
+    </button>
+
+    <button class="qa-tile qa-action" id="qaLearn" type="button">
+      <div class="qa-title">Continue learning</div>
+      <div class="qa-sub">View all quizzes</div>
+    </button>
+
+    <button class="qa-tile qa-action" id="qaInfo" type="button">
+      <div class="qa-title">Info</div>
+      <div class="qa-sub">Browse resources</div>
+    </button>
+
+    <button class="qa-tile qa-action" id="qaSettings" type="button">
+      <div class="qa-title">Settings</div>
+      <div class="qa-sub">Accessibility + app</div>
+    </button>
+
+    <button class="qa-tile qa-action" id="qaResetOnboarding" type="button">
+      <div class="qa-title">Reset onboarding</div>
+      <div class="qa-sub">Testing mode</div>
+    </button>
+
+    <button class="qa-tile qa-action" id="qaAskAI" type="button">
+      <div class="qa-title">Ask AI</div>
+      <div class="qa-sub">Open assistant</div>
+    </button>
+  </div>
+
+  <p id="dashErr" style="color: var(--danger); margin-top: 12px;"></p>
+</div>
